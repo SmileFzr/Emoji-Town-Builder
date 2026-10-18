@@ -1,8 +1,13 @@
-# 🏙️ Emoji World Designer
+# 🏙️ Emoji World Designer & Town Builder
 
-> 用 Emoji 自由搭建你的 9:16 微型世界 —— 拖拽、旋转、缩放、分层，一键导出 PNG 或文本网格。
+> 🎨 用 Emoji 自由搭建你的微型世界 —— 拖拽、旋转、缩放、分层，一键导出 PNG 或文本网格。
 
-一个纯前端、零构建、开箱即用的 Emoji 场景编辑器。所有操作都在浏览器本地完成，无需后端、无需登录，打开即用。
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-在线体验-brightgreen?style=for-the-badge&logo=github)](https://smilefzr.github.io/Emoji-Town-Builder/)
+[![Vanilla JS](https://img.shields.io/badge/Vanilla-JS-yellow?style=for-the-badge&logo=javascript)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-blue?style=for-the-badge&logo=tailwindcss)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+👉 **[点击这里立即在线体验 (Live Demo)](https://smilefzr.github.io/Emoji-Town-Builder/)** 👈
 
 ---
 
