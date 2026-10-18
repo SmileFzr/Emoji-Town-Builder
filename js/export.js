@@ -1,25 +1,14 @@
-// ==================== 导出 PNG ====================
-document.getElementById('btnExportPNG').addEventListener('click', () => {
-  const curSelected = state.selectedId;
-  selectObject(null);
-  showToast('Exporting PNG...');
-
-  setTimeout(() => {
-    html2canvas(designCanvas, { backgroundColor: null, scale: 2 }).then(canvas => {
-      const link = document.createElement('a');
-      link.download = `emoji-town-${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      selectObject(curSelected);
-    });
-  }, 150);
-});
-
-// ==================== 导出文本 Emoji 网格 ====================
+// 导出网格时，行列数根据当前画布比例动态计算
 document.getElementById('btnExportTextGrid').addEventListener('click', () => {
-  const gridWidth = 9, gridHeight = 16;
+  const [w, h] = state.aspectRatio.split('/').map(Number);
+  
+  // 基准网格：按 9:16 划分为 9x16，其他比例按比例换算
+  const gridWidth = w * 1; 
+  const gridHeight = h * 1; 
+  
   const cellW = designCanvas.clientWidth / gridWidth;
   const cellH = designCanvas.clientHeight / gridHeight;
+  
   const grid = Array(gridHeight).fill(null).map(() => Array(gridWidth).fill('🌿'));
 
   [...state.canvasObjects].sort((a, b) => a.zIndex - b.zIndex).forEach(obj => {
@@ -32,20 +21,4 @@ document.getElementById('btnExportTextGrid').addEventListener('click', () => {
 
   document.getElementById('textExportContent').textContent = grid.map(r => r.join(' ')).join('\n');
   document.getElementById('exportTextModal').classList.remove('hidden');
-});
-
-function closeTextExportModal() {
-  document.getElementById('exportTextModal').classList.add('hidden');
-}
-window.closeTextExportModal = closeTextExportModal;
-
-document.getElementById('btnCopyTextGrid').addEventListener('click', () => {
-  const text = document.getElementById('textExportContent').textContent;
-  const textArea = document.createElement('textarea');
-  textArea.value = text;
-  document.body.appendChild(textArea);
-  textArea.select();
-  document.execCommand('copy');
-  document.body.removeChild(textArea);
-  showToast('Text grid copied!');
 });

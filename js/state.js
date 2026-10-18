@@ -5,10 +5,10 @@ let state = {
   isRotateMode: false,
   activeCategory: 'buildings',
   isMenuCollapsed: false,
-  nextId: 1
+  nextId: 1,
+  aspectRatio: '9/16' // 新增比例状态
 };
 
-// ==================== 撤销历史 ====================
 let historyStack = [];
 
 function saveHistory() {

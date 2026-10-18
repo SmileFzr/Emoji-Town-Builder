@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Emoji World Designer & Town Builder</title>
 
-  <!-- 第三方依赖 -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,181 +12,173 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <!-- Tailwind 主题配置（必须在 CDN 之后） -->
   <script src="js/tailwind-config.js"></script>
-
-  <!-- 自定义样式 -->
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans h-screen w-screen overflow-hidden flex flex-col antialiased select-none">
 
-  <!-- ==================== 顶部工具栏 ==================== -->
-  <header class="h-14 bg-slate-900/90 border-b border-slate-800 px-4 flex items-center justify-between z-30 shrink-0">
-    <div class="flex items-center space-x-3">
-      <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-xl shadow-lg shadow-brand-500/30">
+  <!-- 顶部工具栏 (优化了布局和尺寸) -->
+  <header class="h-12 bg-slate-900/90 border-b border-slate-800 px-3 flex items-center justify-between z-30 shrink-0">
+    <div class="flex items-center space-x-2">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-sm shadow-lg shadow-brand-500/30">
         🏙️
       </div>
-      <div>
-        <h1 class="font-bold text-base leading-none tracking-tight flex items-center gap-2">
-          Emoji World Designer
-          <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-brand-500/20 text-brand-400 border border-brand-500/30">9:16 Canvas</span>
-        </h1>
-      </div>
+      <h1 class="font-bold text-sm leading-none tracking-tight">Emoji Designer</h1>
     </div>
 
-    <div class="flex items-center space-x-2">
-      <button id="btnClear" title="Clear Canvas" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition">
-        <i class="fa-solid fa-trash-can text-rose-400"></i>
-        <span class="hidden md:inline">Clear</span>
-      </button>
-
+    <div class="flex items-center space-x-1.5">
+      <!-- 比例选择下拉 -->
       <div class="relative group">
-        <button class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
-          <span class="hidden md:inline">Presets</span>
-          <i class="fa-solid fa-chevron-down text-[10px] opacity-60"></i>
+        <button class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center gap-1 transition">
+          <i class="fa-solid fa-crop-simple text-brand-400"></i>
+          <span id="lblAspectRatio">9:16</span>
+          <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
         </button>
-        <div class="absolute right-0 mt-1 w-44 bg-slate-800 border border-slate-700 rounded-xl shadow-xl py-1 hidden group-hover:block z-50">
-          <button onclick="loadPreset('town')" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-700 flex items-center gap-2">
+        <div class="absolute left-0 mt-1 w-24 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50">
+          <button onclick="changeAspectRatio('9/16')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">9:16 竖版</button>
+          <button onclick="changeAspectRatio('3/4')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">3:4 照片</button>
+          <button onclick="changeAspectRatio('1/1')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">1:1 正方形</button>
+          <button onclick="changeAspectRatio('4/3')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">4:3 横向</button>
+          <button onclick="changeAspectRatio('16/9')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">16:9 宽屏</button>
+        </div>
+      </div>
+
+      <!-- 预设 -->
+      <div class="relative group">
+        <button class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center transition">
+          <i class="fa-solid fa-wand-magic-sparkles text-amber-400 text-sm"></i>
+        </button>
+        <div class="absolute right-0 mt-1 w-36 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50">
+          <button onclick="loadPreset('town')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700 flex items-center gap-2">
             <span>🏡</span> Emoji Town
           </button>
-          <button onclick="loadPreset('forest')" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-700 flex items-center gap-2">
+          <button onclick="loadPreset('forest')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700 flex items-center gap-2">
             <span>🌲</span> Forest Haven
           </button>
-          <button onclick="loadPreset('empty')" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-700 flex items-center gap-2">
+          <button onclick="loadPreset('empty')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700 flex items-center gap-2">
             <span>📄</span> Blank Canvas
           </button>
         </div>
       </div>
 
+      <!-- 清空 -->
+      <button id="btnClear" title="Clear Canvas" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition">
+        <i class="fa-solid fa-trash-can text-rose-400 text-sm"></i>
+      </button>
+
+      <!-- 导出 -->
       <div class="relative group">
-        <button class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-brand-600/30 transition">
+        <button class="px-2 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-[11px] font-semibold flex items-center gap-1 shadow-lg shadow-brand-600/30 transition">
           <i class="fa-solid fa-download"></i>
           <span>Export</span>
-          <i class="fa-solid fa-chevron-down text-[10px] opacity-70"></i>
         </button>
-        <div class="absolute right-0 mt-1 w-52 bg-slate-800 border border-slate-700 rounded-xl shadow-xl py-1 hidden group-hover:block z-50">
-          <button id="btnExportPNG" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-700 flex items-center gap-2">
-            <i class="fa-solid fa-file-image text-emerald-400 w-4"></i> Export PNG Image
+        <div class="absolute right-0 mt-1 w-44 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50">
+          <button id="btnExportPNG" class="w-full text-left px-3 py-2 text-[11px] text-slate-200 hover:bg-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-file-image text-emerald-400 w-3"></i> Export PNG
           </button>
-          <button id="btnExportTextGrid" class="w-full text-left px-3 py-2 text-xs text-slate-200 hover:bg-slate-700 flex items-center gap-2">
-            <i class="fa-solid fa-font text-amber-400 w-4"></i> Copy as Emoji Grid
+          <button id="btnExportTextGrid" class="w-full text-left px-3 py-2 text-[11px] text-slate-200 hover:bg-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-font text-amber-400 w-3"></i> Copy Text Grid
           </button>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- ==================== 主画布区 ==================== -->
+  <!-- 主画布区 -->
   <main class="flex-1 bg-slate-950 p-2 flex flex-col items-center justify-center relative overflow-hidden h-full pb-28">
+    
+    <!-- 画布容器：自适应剩余高度 -->
+    <div id="canvasWrapper" class="flex-1 w-full max-h-full flex items-center justify-center p-2">
+      <!-- 动态画布，宽高由 JS 根据比例计算 -->
+      <div id="designCanvas" class="theme-grass relative shadow-2xl rounded-xl overflow-hidden border border-slate-700/50 transition-all duration-300" style="width: 337px; height: 600px;">
+        
+        <div id="emptyHint" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-40 text-slate-800 dark:text-slate-200">
+          <i class="fa-solid fa-icons text-3xl mb-2"></i>
+          <p class="text-[10px] font-semibold">Canvas Ready</p>
+        </div>
 
-    <div id="designCanvas" class="theme-grass relative shadow-2xl rounded-2xl overflow-hidden border-2 border-slate-700/50 transition-all duration-300 max-h-[72vh] aspect-[9/16]" style="width: 337px; height: 600px;">
+        <div id="canvasObjectsContainer" class="absolute inset-0"></div>
 
-      <div id="emptyHint" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-40 text-slate-800 dark:text-slate-200">
-        <i class="fa-solid fa-icons text-4xl mb-2"></i>
-        <p class="text-xs font-semibold">Canvas Ready</p>
-        <p class="text-[10px]">Add emojis from menu below</p>
-      </div>
-
-      <div id="canvasObjectsContainer" class="absolute inset-0"></div>
-
-      <div id="rotateBanner" class="absolute top-3 left-1/2 -translate-x-1/2 bg-amber-500/90 text-slate-950 font-bold px-3 py-1 rounded-full text-xs shadow-lg hidden items-center gap-1.5 z-30 transition-all">
-        <i class="fa-solid fa-arrows-rotate animate-spin"></i>
-        <span id="rotateAngleTxt">Rotation Mode: Drag to Rotate (Snapped)</span>
+        <div id="rotateBanner" class="absolute top-2 left-1/2 -translate-x-1/2 bg-amber-500/90 text-slate-950 font-bold px-2 py-0.5 rounded-full text-[10px] shadow-lg hidden items-center gap-1 z-30 transition-all">
+          <i class="fa-solid fa-arrows-rotate animate-spin"></i>
+          <span id="rotateAngleTxt">Rotation (0°)</span>
+        </div>
       </div>
     </div>
 
-    <!-- ==================== 选中对象的悬浮控制面板 ==================== -->
-    <div id="floatingObjectControls" class="fixed right-4 top-20 flex flex-col gap-2 z-40 transition-all duration-200 transform scale-0 opacity-0 pointer-events-none">
-
-      <button id="btnToggleRotateMode" class="w-12 h-12 glass-panel rounded-full text-amber-400 hover:bg-slate-700 flex flex-col items-center justify-center text-xs shadow-xl active:scale-95 transition" title="Toggle Rotate Mode">
-        <i class="fa-solid fa-arrows-rotate text-sm"></i>
-        <span class="text-[8px] font-bold uppercase mt-0.5" id="lblRotateMode">Rotate</span>
+    <!-- 悬浮控制按钮 -->
+    <div id="floatingObjectControls" class="fixed right-3 top-16 flex flex-col gap-1.5 z-40 transition-all duration-200 transform scale-0 opacity-0 pointer-events-none">
+      <button id="btnToggleRotateMode" class="w-10 h-10 glass-panel rounded-full text-amber-400 hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
+        <i class="fa-solid fa-arrows-rotate text-xs"></i>
+        <span class="text-[7px] font-bold mt-0.5">Rotate</span>
       </button>
-
-      <button id="btnSnapStraight" class="w-12 h-12 glass-panel rounded-full text-emerald-400 hover:bg-slate-700 flex flex-col items-center justify-center text-xs shadow-xl active:scale-95 transition" title="Straighten (Snap 0°)">
-        <i class="fa-solid fa-compass text-sm"></i>
-        <span class="text-[8px] font-bold uppercase mt-0.5">Align</span>
+      <button id="btnSnapStraight" class="w-10 h-10 glass-panel rounded-full text-emerald-400 hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
+        <i class="fa-solid fa-compass text-xs"></i>
+        <span class="text-[7px] font-bold mt-0.5">Align</span>
       </button>
-
-      <button id="btnLayerUp" class="w-12 h-12 glass-panel rounded-full text-white hover:bg-slate-700 flex flex-col items-center justify-center text-xs shadow-xl active:scale-95 transition" title="Move Layer Up">
-        <i class="fa-solid fa-chevron-up text-brand-400 text-sm"></i>
-        <span class="text-[8px] font-bold uppercase mt-0.5">Up</span>
+      <button id="btnLayerUp" class="w-10 h-10 glass-panel rounded-full text-white hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
+        <i class="fa-solid fa-chevron-up text-brand-400 text-xs"></i>
+        <span class="text-[7px] font-bold mt-0.5">Up</span>
       </button>
-
-      <button id="btnLayerDown" class="w-12 h-12 glass-panel rounded-full text-white hover:bg-slate-700 flex flex-col items-center justify-center text-xs shadow-xl active:scale-95 transition" title="Move Layer Down">
-        <i class="fa-solid fa-chevron-down text-brand-400 text-sm"></i>
-        <span class="text-[8px] font-bold uppercase mt-0.5">Down</span>
+      <button id="btnLayerDown" class="w-10 h-10 glass-panel rounded-full text-white hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
+        <i class="fa-solid fa-chevron-down text-brand-400 text-xs"></i>
+        <span class="text-[7px] font-bold mt-0.5">Down</span>
       </button>
-
-      <button id="btnDuplicateObj" class="w-12 h-12 glass-panel rounded-full text-sky-300 hover:bg-slate-700 flex flex-col items-center justify-center text-xs shadow-xl active:scale-95 transition" title="Duplicate Emoji">
-        <i class="fa-solid fa-clone text-sm"></i>
-        <span class="text-[8px] font-bold uppercase mt-0.5">Copy</span>
+      <button id="btnDuplicateObj" class="w-10 h-10 glass-panel rounded-full text-sky-300 hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
+        <i class="fa-solid fa-clone text-xs"></i>
+        <span class="text-[7px] font-bold mt-0.5">Copy</span>
       </button>
-
-      <button id="btnDeleteObj" class="w-12 h-12 glass-panel rounded-full bg-rose-500/30 text-rose-300 border border-rose-500/40 hover:bg-rose-500/50 flex flex-col items-center justify-center text-xs shadow-xl active:scale-95 transition" title="Delete Emoji">
-        <i class="fa-solid fa-trash-can text-sm"></i>
-        <span class="text-[8px] font-bold uppercase mt-0.5">Delete</span>
+      <button id="btnDeleteObj" class="w-10 h-10 glass-panel rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/40 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
+        <i class="fa-solid fa-trash-can text-xs"></i>
+        <span class="text-[7px] font-bold mt-0.5">Delete</span>
       </button>
-
-      <button id="btnUndoObj" class="w-12 h-12 glass-panel rounded-full text-indigo-300 hover:bg-slate-700 flex flex-col items-center justify-center text-xs shadow-xl active:scale-95 transition" title="Undo Action">
-        <i class="fa-solid fa-rotate-left text-sm"></i>
-        <span class="text-[8px] font-bold uppercase mt-0.5">Undo</span>
+      <button id="btnUndoObj" class="w-10 h-10 glass-panel rounded-full text-indigo-300 hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
+        <i class="fa-solid fa-rotate-left text-xs"></i>
+        <span class="text-[7px] font-bold mt-0.5">Undo</span>
       </button>
     </div>
 
-    <!-- ==================== 底部 Emoji 选择面板 ==================== -->
-    <div class="absolute bottom-3 left-0 right-0 px-4 flex flex-col items-center z-40 pointer-events-none">
-
-      <div id="emojiMenuPanel" class="w-full max-w-lg glass-panel rounded-2xl p-3 shadow-2xl transition-all duration-300 transform translate-y-0 pointer-events-auto flex flex-col gap-2">
-
-        <div id="categoryTabs" class="flex items-center gap-1.5 overflow-x-auto text-xs no-scrollbar pb-1"></div>
-
-        <div id="emojiGrid" class="flex items-center gap-2 overflow-x-auto py-1 no-scrollbar min-h-[52px]"></div>
-
+    <!-- 底部 Emoji 面板 -->
+    <div class="absolute bottom-2 left-0 right-0 px-2 flex flex-col items-center z-40 pointer-events-none">
+      <div id="emojiMenuPanel" class="w-full max-w-xl glass-panel rounded-2xl p-2 shadow-2xl transition-all duration-300 transform translate-y-0 pointer-events-auto flex flex-col gap-1.5">
+        <!-- 分类 Tabs -->
+        <div id="categoryTabs" class="flex items-center gap-1 overflow-x-auto text-[11px] no-scrollbar pb-1 px-1">
+          <!-- 由 JS 渲染 -->
+        </div>
+        <!-- Emoji 列表 -->
+        <div id="emojiGrid" class="grid grid-cols-7 sm:grid-cols-8 md:grid-cols-10 gap-1 overflow-y-auto no-scrollbar max-h-[140px] min-h-[60px] px-1 pb-1">
+          <!-- 由 JS 渲染 -->
+        </div>
       </div>
 
-      <button id="btnToggleMenu" class="mt-2 glass-panel px-4 py-1.5 rounded-full text-xs font-semibold text-slate-300 hover:text-white flex items-center gap-2 shadow-xl pointer-events-auto transition active:scale-95">
+      <button id="btnToggleMenu" class="mt-1.5 glass-panel px-3 py-1 rounded-full text-[10px] font-semibold text-slate-300 hover:text-white flex items-center gap-1.5 shadow-xl pointer-events-auto transition active:scale-95">
         <i id="toggleMenuIcon" class="fa-solid fa-chevron-down text-brand-400"></i>
-        <span id="toggleMenuText">Collapse Menu</span>
+        <span id="toggleMenuText">Collapse</span>
       </button>
-
     </div>
-
   </main>
 
-  <!-- ==================== 文本 Emoji 导出弹窗 ==================== -->
+  <!-- 弹窗 & Toast -->
   <div id="exportTextModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-5 shadow-2xl flex flex-col max-h-[90vh]">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-700">
-        <h3 class="font-bold text-base text-white flex items-center gap-2">
-          <span>✨</span> Exported Emoji Text Grid
-        </h3>
-        <button onclick="closeTextExportModal()" class="text-slate-400 hover:text-white text-lg">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-4 shadow-2xl flex flex-col max-h-[80vh]">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-700">
+        <h3 class="font-bold text-sm text-white">Exported Emoji Text Grid</h3>
+        <button onclick="closeTextExportModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
       </div>
-
-      <div class="flex-1 bg-slate-900 rounded-xl p-3 border border-slate-700 my-3 overflow-auto font-mono text-sm leading-relaxed text-center select-all whitespace-pre" id="textExportContent"></div>
-
+      <div class="flex-1 bg-slate-900 rounded-lg p-2 border border-slate-700 my-2 overflow-auto font-mono text-[11px] leading-relaxed text-center select-all whitespace-pre" id="textExportContent"></div>
       <div class="flex items-center justify-end space-x-2 pt-2 border-t border-slate-700">
-        <button onclick="closeTextExportModal()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl text-xs font-semibold text-slate-200">
-          Close
-        </button>
-        <button id="btnCopyTextGrid" class="px-4 py-2 bg-brand-600 hover:bg-brand-500 rounded-xl text-xs font-semibold text-white flex items-center gap-1.5">
-          <i class="fa-solid fa-copy"></i> Copy Grid
-        </button>
+        <button onclick="closeTextExportModal()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-semibold">Close</button>
+        <button id="btnCopyTextGrid" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-500 rounded-lg text-xs font-semibold flex items-center gap-1"><i class="fa-solid fa-copy"></i> Copy</button>
       </div>
     </div>
   </div>
 
-  <!-- ==================== 通知 Toast ==================== -->
-  <div id="toast" class="fixed top-16 right-5 bg-brand-600 text-white px-4 py-2 rounded-xl shadow-xl text-xs font-semibold flex items-center space-x-2 transition-all duration-300 opacity-0 pointer-events-none z-50 transform translate-y-[-10px]">
-    <i class="fa-solid fa-circle-check text-sm"></i>
+  <div id="toast" class="fixed top-14 right-4 bg-brand-600 text-white px-3 py-1.5 rounded-lg shadow-xl text-[11px] font-semibold flex items-center space-x-1.5 transition-all duration-300 opacity-0 pointer-events-none z-50 transform translate-y-[-10px]">
+    <i class="fa-solid fa-circle-check"></i>
     <span id="toastMsg">Action completed</span>
   </div>
 
-  <!-- ==================== 脚本（按依赖顺序加载） ==================== -->
+  <!-- 脚本 -->
   <script src="js/config.js"></script>
   <script src="js/state.js"></script>
   <script src="js/dom.js"></script>
