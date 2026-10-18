@@ -17,16 +17,31 @@
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans h-screen w-screen overflow-hidden flex flex-col antialiased select-none">
 
-  <!-- 顶部工具栏 (优化了布局和尺寸) -->
+  <!-- 顶部工具栏 -->
   <header class="h-12 bg-slate-900/90 border-b border-slate-800 px-3 flex items-center justify-between z-30 shrink-0">
     <div class="flex items-center space-x-2">
       <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-sm shadow-lg shadow-brand-500/30">
         🏙️
       </div>
-      <h1 class="font-bold text-sm leading-none tracking-tight">Emoji Designer</h1>
+      <h1 class="font-bold text-sm leading-none tracking-tight" id="appTitle">Emoji Designer</h1>
     </div>
 
     <div class="flex items-center space-x-1.5">
+      <!-- 语言切换 -->
+      <div class="relative group">
+        <button class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center gap-1 transition">
+          <span id="langFlag">🇨🇳</span>
+          <span id="langCode">ZH</span>
+          <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
+        </button>
+        <div class="absolute right-0 mt-1 w-28 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50">
+          <button onclick="switchLanguage('zh')" class="w-full text-left px-3 py-1.5 text-[11px] hover:bg-slate-700 flex items-center gap-2">🇨🇳 中文 (ZH)</button>
+          <button onclick="switchLanguage('en')" class="w-full text-left px-3 py-1.5 text-[11px] hover:bg-slate-700 flex items-center gap-2">🇺🇸 English (EN)</button>
+          <button onclick="switchLanguage('ja')" class="w-full text-left px-3 py-1.5 text-[11px] hover:bg-slate-700 flex items-center gap-2">🇯🇵 日本語 (JA)</button>
+          <button onclick="switchLanguage('ko')" class="w-full text-left px-3 py-1.5 text-[11px] hover:bg-slate-700 flex items-center gap-2">🇰🇷 한국어 (KO)</button>
+        </div>
+      </div>
+
       <!-- 比例选择下拉 -->
       <div class="relative group">
         <button class="px-2 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center gap-1 transition">
@@ -34,12 +49,16 @@
           <span id="lblAspectRatio">9:16</span>
           <i class="fa-solid fa-chevron-down text-[8px] opacity-60"></i>
         </button>
-        <div class="absolute left-0 mt-1 w-24 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50">
+        <div class="absolute right-0 mt-1 w-32 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50">
           <button onclick="changeAspectRatio('9/16')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">9:16 竖版</button>
           <button onclick="changeAspectRatio('3/4')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">3:4 照片</button>
           <button onclick="changeAspectRatio('1/1')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">1:1 正方形</button>
           <button onclick="changeAspectRatio('4/3')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">4:3 横向</button>
           <button onclick="changeAspectRatio('16/9')" class="w-full text-left px-3 py-1.5 text-[11px] text-slate-200 hover:bg-slate-700">16:9 宽屏</button>
+          <div class="border-t border-slate-700 my-1"></div>
+          <button onclick="openCustomSizeModal()" class="w-full text-left px-3 py-1.5 text-[11px] text-brand-400 font-semibold hover:bg-slate-700 flex items-center gap-2">
+            <i class="fa-solid fa-ruler-combined w-3"></i> <span id="lblCustomSize">自定义尺寸</span>
+          </button>
         </div>
       </div>
 
@@ -70,14 +89,14 @@
       <div class="relative group">
         <button class="px-2 py-1.5 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-[11px] font-semibold flex items-center gap-1 shadow-lg shadow-brand-600/30 transition">
           <i class="fa-solid fa-download"></i>
-          <span>Export</span>
+          <span id="lblExport">Export</span>
         </button>
         <div class="absolute right-0 mt-1 w-44 bg-slate-800 border border-slate-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50">
           <button id="btnExportPNG" class="w-full text-left px-3 py-2 text-[11px] text-slate-200 hover:bg-slate-700 flex items-center gap-2">
-            <i class="fa-solid fa-file-image text-emerald-400 w-3"></i> Export PNG
+            <i class="fa-solid fa-file-image text-emerald-400 w-3"></i> <span id="lblExportPNG">Export PNG</span>
           </button>
           <button id="btnExportTextGrid" class="w-full text-left px-3 py-2 text-[11px] text-slate-200 hover:bg-slate-700 flex items-center gap-2">
-            <i class="fa-solid fa-font text-amber-400 w-3"></i> Copy Text Grid
+            <i class="fa-solid fa-font text-amber-400 w-3"></i> <span id="lblExportText">Copy Text Grid</span>
           </button>
         </div>
       </div>
@@ -87,14 +106,12 @@
   <!-- 主画布区 -->
   <main class="flex-1 bg-slate-950 p-2 flex flex-col items-center justify-center relative overflow-hidden h-full pb-28">
     
-    <!-- 画布容器：自适应剩余高度 -->
     <div id="canvasWrapper" class="flex-1 w-full max-h-full flex items-center justify-center p-2">
-      <!-- 动态画布，宽高由 JS 根据比例计算 -->
       <div id="designCanvas" class="theme-grass relative shadow-2xl rounded-xl overflow-hidden border border-slate-700/50 transition-all duration-300" style="width: 337px; height: 600px;">
         
         <div id="emptyHint" class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-40 text-slate-800 dark:text-slate-200">
           <i class="fa-solid fa-icons text-3xl mb-2"></i>
-          <p class="text-[10px] font-semibold">Canvas Ready</p>
+          <p class="text-[10px] font-semibold" id="hintText">Canvas Ready</p>
         </div>
 
         <div id="canvasObjectsContainer" class="absolute inset-0"></div>
@@ -110,45 +127,43 @@
     <div id="floatingObjectControls" class="fixed right-3 top-16 flex flex-col gap-1.5 z-40 transition-all duration-200 transform scale-0 opacity-0 pointer-events-none">
       <button id="btnToggleRotateMode" class="w-10 h-10 glass-panel rounded-full text-amber-400 hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
         <i class="fa-solid fa-arrows-rotate text-xs"></i>
-        <span class="text-[7px] font-bold mt-0.5">Rotate</span>
+        <span class="text-[7px] font-bold mt-0.5" id="lblRotate">Rotate</span>
       </button>
       <button id="btnSnapStraight" class="w-10 h-10 glass-panel rounded-full text-emerald-400 hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
         <i class="fa-solid fa-compass text-xs"></i>
-        <span class="text-[7px] font-bold mt-0.5">Align</span>
+        <span class="text-[7px] font-bold mt-0.5" id="lblAlign">Align</span>
       </button>
       <button id="btnLayerUp" class="w-10 h-10 glass-panel rounded-full text-white hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
         <i class="fa-solid fa-chevron-up text-brand-400 text-xs"></i>
-        <span class="text-[7px] font-bold mt-0.5">Up</span>
+        <span class="text-[7px] font-bold mt-0.5" id="lblLayerUp">Up</span>
       </button>
       <button id="btnLayerDown" class="w-10 h-10 glass-panel rounded-full text-white hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
         <i class="fa-solid fa-chevron-down text-brand-400 text-xs"></i>
-        <span class="text-[7px] font-bold mt-0.5">Down</span>
+        <span class="text-[7px] font-bold mt-0.5" id="lblLayerDown">Down</span>
       </button>
       <button id="btnDuplicateObj" class="w-10 h-10 glass-panel rounded-full text-sky-300 hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
         <i class="fa-solid fa-clone text-xs"></i>
-        <span class="text-[7px] font-bold mt-0.5">Copy</span>
+        <span class="text-[7px] font-bold mt-0.5" id="lblDuplicate">Copy</span>
       </button>
       <button id="btnDeleteObj" class="w-10 h-10 glass-panel rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/40 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
         <i class="fa-solid fa-trash-can text-xs"></i>
-        <span class="text-[7px] font-bold mt-0.5">Delete</span>
+        <span class="text-[7px] font-bold mt-0.5" id="lblDelete">Delete</span>
       </button>
       <button id="btnUndoObj" class="w-10 h-10 glass-panel rounded-full text-indigo-300 hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
         <i class="fa-solid fa-rotate-left text-xs"></i>
-        <span class="text-[7px] font-bold mt-0.5">Undo</span>
+        <span class="text-[7px] font-bold mt-0.5" id="lblUndo">Undo</span>
+      </button>
+      <button id="btnRedoObj" class="w-10 h-10 glass-panel rounded-full text-teal-300 hover:bg-slate-700 flex flex-col items-center justify-center shadow-xl active:scale-95 transition">
+        <i class="fa-solid fa-rotate-right text-xs"></i>
+        <span class="text-[7px] font-bold mt-0.5" id="lblRedo">Redo</span>
       </button>
     </div>
 
     <!-- 底部 Emoji 面板 -->
     <div class="absolute bottom-2 left-0 right-0 px-2 flex flex-col items-center z-40 pointer-events-none">
       <div id="emojiMenuPanel" class="w-full max-w-xl glass-panel rounded-2xl p-2 shadow-2xl transition-all duration-300 transform translate-y-0 pointer-events-auto flex flex-col gap-1.5">
-        <!-- 分类 Tabs -->
-        <div id="categoryTabs" class="flex items-center gap-1 overflow-x-auto text-[11px] no-scrollbar pb-1 px-1">
-          <!-- 由 JS 渲染 -->
-        </div>
-        <!-- Emoji 列表 -->
-        <div id="emojiGrid" class="grid grid-cols-7 sm:grid-cols-8 md:grid-cols-10 gap-1 overflow-y-auto no-scrollbar max-h-[140px] min-h-[60px] px-1 pb-1">
-          <!-- 由 JS 渲染 -->
-        </div>
+        <div id="categoryTabs" class="flex items-center gap-1 overflow-x-auto text-[11px] no-scrollbar pb-1 px-1"></div>
+        <div id="emojiGrid" class="grid grid-cols-7 sm:grid-cols-8 md:grid-cols-10 gap-1 overflow-y-auto no-scrollbar max-h-[140px] min-h-[60px] px-1 pb-1"></div>
       </div>
 
       <button id="btnToggleMenu" class="mt-1.5 glass-panel px-3 py-1 rounded-full text-[10px] font-semibold text-slate-300 hover:text-white flex items-center gap-1.5 shadow-xl pointer-events-auto transition active:scale-95">
@@ -158,7 +173,28 @@
     </div>
   </main>
 
-  <!-- 弹窗 & Toast -->
+  <!-- 自定义尺寸弹窗 -->
+  <div id="customSizeModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-xs w-full p-4 shadow-2xl">
+      <h3 class="font-bold text-sm text-white mb-3" id="customSizeTitle">自定义尺寸</h3>
+      <div class="flex items-center gap-2 mb-3">
+        <div class="flex-1">
+          <label class="text-[10px] text-slate-400 block mb-1" id="labelW">宽度</label>
+          <input id="inputCustomW" type="number" value="337" min="100" max="2000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        </div>
+        <div class="flex-1">
+          <label class="text-[10px] text-slate-400 block mb-1" id="labelH">高度</label>
+          <input id="inputCustomH" type="number" value="600" min="100" max="2000" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-brand-500">
+        </div>
+      </div>
+      <div class="flex justify-end gap-2">
+        <button onclick="closeCustomSizeModal()" class="px-3 py-1.5 bg-slate-700 hover:bg-slate-600 rounded-lg text-xs font-semibold text-slate-200" id="btnCancelSize">取消</button>
+        <button onclick="applyCustomSize()" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-500 rounded-lg text-xs font-semibold text-white" id="btnConfirmSize">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 文本导出弹窗 -->
   <div id="exportTextModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-lg w-full p-4 shadow-2xl flex flex-col max-h-[80vh]">
       <div class="flex items-center justify-between pb-2 border-b border-slate-700">

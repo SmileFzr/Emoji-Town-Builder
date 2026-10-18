@@ -3,7 +3,7 @@ btnToggleRotateMode.addEventListener('click', () => {
   if (state.selectedId !== null) {
     state.isRotateMode = !state.isRotateMode;
     updateVisuals();
-    showToast(state.isRotateMode ? 'Rotate mode active. Drag to spin.' : 'Move mode active.');
+    showToast(state.isRotateMode ? 'Rotate mode ON' : 'Move mode ON');
   }
 });
 
@@ -11,6 +11,7 @@ btnToggleRotateMode.addEventListener('click', () => {
 document.getElementById('btnSnapStraight').addEventListener('click', () => {
   const obj = state.canvasObjects.find(o => o.id === state.selectedId);
   if (obj) {
+    saveHistory();
     obj.rotate = 0;
     updateVisuals();
     showToast('Aligned to 0°');
@@ -34,7 +35,7 @@ document.getElementById('btnDuplicateObj').addEventListener('click', () => {
     state.canvasObjects.push(copyObj);
     selectObject(copyObj.id);
     renderCanvas();
-    showToast('Emoji duplicated');
+    showToast('Copied');
   }
 });
 
@@ -45,7 +46,7 @@ document.getElementById('btnLayerUp').addEventListener('click', () => {
     saveHistory();
     obj.zIndex += 1;
     updateVisuals();
-    showToast('Moved layer up');
+    showToast('Layer Up');
   }
 });
 
@@ -56,7 +57,7 @@ document.getElementById('btnLayerDown').addEventListener('click', () => {
     saveHistory();
     obj.zIndex = Math.max(1, obj.zIndex - 1);
     updateVisuals();
-    showToast('Moved layer down');
+    showToast('Layer Down');
   }
 });
 
@@ -67,13 +68,17 @@ document.getElementById('btnDeleteObj').addEventListener('click', () => {
     state.canvasObjects = state.canvasObjects.filter(o => o.id !== state.selectedId);
     selectObject(null);
     renderCanvas();
-    showToast('Emoji removed');
+    showToast('Deleted');
   }
 });
 
-// ==================== 撤销 ====================
+// ==================== 撤回 & 重做 ====================
 document.getElementById('btnUndoObj').addEventListener('click', () => {
   undoLastAction();
+});
+
+document.getElementById('btnRedoObj').addEventListener('click', () => {
+  redoLastAction();
 });
 
 // ==================== 底部面板折叠 ====================
@@ -82,11 +87,11 @@ btnToggleMenu.addEventListener('click', () => {
   if (state.isMenuCollapsed) {
     emojiMenuPanel.classList.add('translate-y-[120%]', 'opacity-0');
     toggleMenuIcon.className = 'fa-solid fa-chevron-up text-brand-400';
-    toggleMenuText.textContent = 'Open Emoji Palette';
+    toggleMenuText.textContent = I18N[currentLang].openPalette;
   } else {
     emojiMenuPanel.classList.remove('translate-y-[120%]', 'opacity-0');
     toggleMenuIcon.className = 'fa-solid fa-chevron-down text-brand-400';
-    toggleMenuText.textContent = 'Collapse Menu';
+    toggleMenuText.textContent = I18N[currentLang].collapse;
   }
 });
 
@@ -97,5 +102,5 @@ document.getElementById('btnClear').addEventListener('click', () => {
   state.canvasObjects = [];
   selectObject(null);
   renderCanvas();
-  showToast('Canvas cleared');
+  showToast('Canvas Cleared');
 });
